@@ -2,13 +2,17 @@ const express = require('express');
 
 const app = express();
 
-app.get("/test", (req,res) => {
-    res.send("Namaste from dashboard!");
-})
-
-app.get("/home",(req,res) => {
-    res.send("Hello Hello Hello ");
-})
+app.use("/user", (req, res, next) => {
+    next();
+    
+}, (req, res, next) => {
+    next();
+    
+}, (req, res, next) => {
+    res.send("response 3");
+    next();
+}
+) 
 
 app.listen(7777, () => {
     console.log("Server is listening on port 7777");
