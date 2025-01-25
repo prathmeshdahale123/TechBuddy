@@ -19,6 +19,11 @@ app.get("/admin/delete", (req,res) => {
     res.send("user deleted succesfully");
 })
 
+// Error handling middleware - used to handle all the errors
+app.use("/", (err,req,res,next) => {
+    res.status(500).send("Something went wrong");
+})
+
 
 
 app.listen(7777, () => {
