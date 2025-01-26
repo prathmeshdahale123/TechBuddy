@@ -15,6 +15,30 @@ app.post("/signup", async (req,res) => {
         res.status(400).send("something went wrong in user creation.")
     }
 })
+//route to get user by email
+app.get("/user", async (req,res) => {
+    const userEmail = req.body.email;
+    try {
+        const user = await User.find({email: userEmail})
+        if(user==0){
+            res.send("User not found")
+        } else{
+            res.send(user);
+        }
+    } catch (error) {
+        res.status(403).send("Something went wrong")
+    }
+})
+
+//feed API - to get all users in db
+app.get("/feed", async (req,res) => {
+    try {
+        const user = await User.find({})
+        res.send(user)
+    } catch (error) {
+        res.status(403).send("Something went wrong")
+    }
+})
 
 connectDB()
 .then(() => {
