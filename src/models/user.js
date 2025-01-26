@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema({
         type: Number
     }, 
     gender: {
-        type: Stringy
+        type: String
     }
 })
 
