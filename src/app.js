@@ -5,6 +5,7 @@ const { User } = require("./models/user")
 
 app.use(express.json());
 
+//API route to create new user
 app.post("/signup", async (req,res) => {
     const user = new User(req.body);
 
@@ -37,6 +38,21 @@ app.get("/feed", async (req,res) => {
         res.send(user)
     } catch (error) {
         res.status(403).send("Something went wrong")
+    }
+})
+
+//delete a user by id
+app.delete("/user", async (req,res) => {
+    const userId = req.body.userId;
+    try {
+        //const user = await User.findByIdAndDelete({_id: userId})
+        //shorthand of above -both are same
+         const user = await User.findByIdAndDelete(userId)
+        res.send("User deleted succesfully...")
+        
+    } catch (error) {
+        res.status(400).send("something went wrong." + error.message)
+        
     }
 })
 
