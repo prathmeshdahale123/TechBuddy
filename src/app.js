@@ -13,7 +13,7 @@ app.post("/signup", async (req,res) => {
         await user.save();
     res.json("User created succesfully...");
     } catch (error) {
-        res.status(400).send("something went wrong in user creation.")
+        res.status(400).send("something went wrong in user creation." + error.message)
     }
 })
 //route to get user by email
@@ -50,8 +50,8 @@ app.delete("/user", async (req,res) => {
          const user = await User.findByIdAndDelete(userId)
         res.send("User deleted succesfully...")
         
-    } catch (error) {
-        res.status(400).send("something went wrong." + error.message)
+    } catch (err) {
+        res.status(400).send("something went wrong." + err.message)
         
     }
 })
@@ -61,9 +61,11 @@ app.patch("/user", async (req,res) => {
     const userId = req.body.userId;
     const data = req.body;
     try {
-    const user = await User.findByIdAndUpdate(userId, data);
+    const user = await User.findByIdAndUpdate(userId, data, {
+        runValidators: true
+    });
     res.send("User updated succesfully")
-    } catch {
+    } catch (error) {
         res.status(400).send("something went wrong." + error.message)
     }
 })
