@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const validator = require("validator")
 
 const userSchema = new mongoose.Schema({
     firstName: {
@@ -17,12 +18,21 @@ const userSchema = new mongoose.Schema({
         unique: true,
         trim: true,
         lowercase: true,
-        maxLength: 50
+        maxLength: 50,
+        validate(value) {
+            if(!validator.isEmail(value)){
+                throw new Error("Invalide emailId")
+            }
+        }
     },
     password: {
         type: String,
         required: true,
-        minLength: 8 
+        validate(value){
+            if(!validator.isStrongPassword(value)){
+                throw new Error("enter strong password")
+            }
+        }
     }, 
     age: {
         type: Number,
