@@ -5,9 +5,12 @@ const { User } = require("./models/user")
 const { validateData } = require("./utils/validate")
 const bcrypt = require("bcrypt");
 const validator = require("validator");
+const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
 
 
 app.use(express.json());
+app.use(cookieParser());
 
 //API route to create new user
 app.post("/signup", async (req,res) => {
@@ -46,12 +49,33 @@ app.post("/login", async (req,res) => {
     } 
    const isPassValid = await bcrypt.compare(password, user.password)
    if(isPassValid) {
-     res.send("Login succesfull!")
+        const cookie = await jwt.sign({_id: user._id}, "pass123");
+        
+        res.cookie("Token", cookie)
+        res.send("Login succesfull")
    }
    else{
         throw new Error("Invalid password")
    }
     } catch (error) {
+        res.status(400).send("ERROR : " + error.message)
+    }
+})
+
+app.get("/profile", async (req,res) => {
+   try {const cookies = req.cookies;
+    const { Token } = cookies;
+    if(!Token) {
+        throw new Error("Invalid Token")
+    }
+    const decodedMsg = await jwt.verify(Token, "pass123")
+    const { _id } = decodedMsg;
+    const user = await User.findById({_id});
+    if(!user) {
+        throw new Error("User not found")
+    }
+    res.send(user)
+}   catch (error) {
         res.status(400).send("ERROR : " + error.message)
     }
 })
