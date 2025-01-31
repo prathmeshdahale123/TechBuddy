@@ -40,23 +40,29 @@ authRouter.post("/login", async (req,res) => {
     }
     const user = await User.findOne({email})
     if(!user) {
-        throw new Error("email not present")
+        throw new Error("User not found")
     } 
-   const isPassValid = user.validatePassword(password)
-   if(isPassValid) {
-        const token = await user.setJWT();
-        
+   const isPassValid = await user.validatePassword(password)
+   if(!isPassValid) {
+        throw new Error("Invalid password")
+   } 
+   const token = await user.setJWT();
         res.cookie("Token", token)
         res.send("Login succesfull")
-   }
-   else{
-        throw new Error("Invalid password")
-   }
+   
     } catch (error) {
         res.status(400).send("ERROR : " + error.message)
     }
 })
 
+authRouter.post("/logout", async (req,res) => {
+    res.cookie("Token", null, {
+        expires: new Date(Date.now())
+    })
+    res.json({msg:'User Logged out succesfully'})
+})
+
 module.exports = {
     authRouter
 }
+
