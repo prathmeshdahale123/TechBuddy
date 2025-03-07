@@ -17,6 +17,8 @@ const connectionRequestSchema = new mongoose.Schema({
             message: '{VALUE} is not supported'
         }
     }
+}, {
+    timestamps: true
 })
 
 connectionRequestSchema.pre("save", function (next) {
