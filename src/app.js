@@ -18,8 +18,6 @@ app.use("/", requestRouter);
 
 
 
-
-
 connectDB()
 .then(() => {
     console.log("database connected succesfully...");
