@@ -79,7 +79,7 @@ userSchema.methods.validatePassword = async function (passwordInputByUser) {
 }
 
 
-const User = mongoose.model("user", userSchema);
+const User = mongoose.model("User", userSchema);
 
 
 
