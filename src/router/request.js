@@ -45,8 +45,8 @@ requestRouter.post("/request/send/:status/:toUserId", userAuth, async (req,res) 
   })
 
   //validate the status
-  //akshay => elon 
-  //loggedInUser == elon
+  //ashwini => shruti 
+  //loggedInUser == shruti
   //status == interested
   // requestId should be valid
 
