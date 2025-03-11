@@ -1,6 +1,7 @@
 const express = require("express");
 const { userAuth } = require("../middleware/auth");
 const { ConnectionRequestModel } = require("../models/connectionRequest");
+const { User } = require("../models/user");
 const userRouter = express.Router();
 const USER_SAFE_DATA = "firstName lastName age gender skills"
 
@@ -50,6 +51,40 @@ userRouter.get("/user/connections", userAuth, async(req,res) => {
 
     } catch (error) {
        res.status(400).send("ERROR " + error.message) 
+    }
+})
+
+//feed api -> user should see all the users profile execpt
+// 0. his own profile
+// 1. his connections
+// 2. already sent request
+// 3. ignored people
+
+userRouter.get("/feed", userAuth, async(req, res) => {
+    try {
+        const loggedInUser = req.user;
+
+        const connectionRequest = await ConnectionRequestModel.find({
+            $or: [{fromUserId: loggedInUser._id}, {toUserId: loggedInUser._id}]
+        }).select("fromUserId toUserId")
+
+        const hideUsersFromFeed = new Set();
+        connectionRequest.forEach((req) => {
+            hideUsersFromFeed.add(req.fromUserId.toString())
+            hideUsersFromFeed.add(req.toUserId.toString())
+
+        })
+        const user = await User.find({
+            $and:[
+                {_id: {$nin: Array.from(hideUsersFromFeed)}},
+                {_id: {$ne: loggedInUser._id}}
+            ]
+        }).select(USER_SAFE_DATA)
+        
+        res.json({user})
+
+    } catch (error) {
+        res.status(400).send("ERROR: " + error.message)
     }
 })
 
